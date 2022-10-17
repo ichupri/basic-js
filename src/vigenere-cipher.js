@@ -19,14 +19,61 @@ const { NotImplementedError } = require('../extensions/index.js');
  * reverseMachine.decrypt('AEIHQX SX DLLU!', 'alphonse') => '!NWAD TA KCATTA'
  * 
  */
-class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+ class VigenereCipheringMachine {
+  constructor(direction = true) {
+    this.direction = direction
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+
+  encrypt(message, key) {
+    if (!message || !key) throw new Error('Incorrect arguments!');
+    let messUp = message.toUpperCase();
+    let keyUp = key.toUpperCase();
+    let text = ''
+    let keycounter = 0;
+    let char;
+
+    for (let i = 0; i < messUp.length; i++) {
+      if (messUp[i].codePointAt() >= 65 && messUp[i].codePointAt() <= 90) {
+        char = (messUp[i].codePointAt() + keyUp[keycounter].codePointAt()) % 26
+        text += String.fromCodePoint(65 + char)
+        keycounter++
+        if (keycounter == keyUp.length) {
+          keycounter = 0
+        }
+      } else {
+        char = messUp[i].codePointAt()
+        text += String.fromCodePoint(char)
+      }
+    }
+    if (this.direction) return text
+    else return text.split('').reverse().join('')
+  }
+
+  decrypt(message, key) {
+    if (!message || !key) throw new Error('Incorrect arguments!');
+    let messUp = message.toUpperCase();
+    let keyUp = key.toUpperCase();
+    let text = ''
+    let keycounter = 0;
+    let char;
+
+    for (let i = 0; i < messUp.length; i++) {
+
+      if (messUp[i].codePointAt() >= 65 && messUp[i].codePointAt() <= 90) {
+        char = (messUp[i].codePointAt() + 26 - keyUp[keycounter].codePointAt()) % 26
+        text += String.fromCodePoint(65 + char)
+        keycounter++
+        if (keycounter == keyUp.length) {
+          keycounter = 0;
+        }
+      } else {
+        char = messUp[i].codePointAt();
+        text += String.fromCodePoint(char);
+      }
+    }
+
+    if (this.direction) return text;
+    else return text.split('').reverse().join('');
   }
 }
 
